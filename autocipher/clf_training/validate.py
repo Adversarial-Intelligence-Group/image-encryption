@@ -28,10 +28,10 @@ def validate(epoch: int,
             images, targets = images.cuda(), targets.cuda()
 
         with torch.no_grad():
-            if writer is not None and (epoch == 0 and idx == 0):
-                writer.add_graph(model, images)
+            # if writer is not None and (epoch == 0 and idx == 0):
+            #     writer.add_graph(model, images)
 
-            images = nn.Sigmoid()(ae_model.decoder(cipher(ae_model.encoder(images))))
+            images = cipher(ae_model.encoder(images))
             # images = ae_model(images)
             outputs = model(images)
             acc = accuracy(outputs, targets)

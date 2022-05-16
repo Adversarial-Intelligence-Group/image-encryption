@@ -10,7 +10,7 @@ import pandas as pd
 from pathlib import Path
 from autocipher.models.cipher import Cipher
 
-from autocipher.models.classifier import get_resnet
+from autocipher.models.classifier import CLFNet, get_resnet
 
 from .train import train
 from .validate import validate
@@ -33,7 +33,7 @@ def run_clf_training(args: Namespace):
     train_loader, val_loader, test_loader = get_dataloaders(args)
 
 
-    model = get_resnet()
+    model = CLFNet()
     model.to(device)
     
     ae_model = Autoencoder()
