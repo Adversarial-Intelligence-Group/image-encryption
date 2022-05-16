@@ -13,6 +13,7 @@ from PIL import Image
 from torchvision import transforms as tf
 
 from autocipher.models.cipher import Cipher
+from autocipher.models.classifier import get_resnet
 
 
 def plot_ae_data(args: Namespace):
@@ -37,6 +38,14 @@ def plot_ae_data(args: Namespace):
     state = torch.load(checkpoint_path)
     model.load_state_dict(state['model'])
 
+
+    clf = get_resnet()
+    clf_path = './.assets/checkpoints/ex_1_clf_220515-235814105533/9/checkpoint.pth'
+    state = torch.load(clf_path)
+    clf.load_state_dict(state['model'])
+    fcclf = clf.fc
+    clf.fc = nn.Identity()
+
     cipher = Cipher()
     cipher = cipher.to(device)
 
@@ -49,9 +58,14 @@ def plot_ae_data(args: Namespace):
         plt.subplot(1,3,1)
 
         orig = images[i]
-        latent_img = cipher(model.encoder(images))
-        decoded_img = model.decoder(latent_img)[i]
+        # latent_img = cipher(model.encoder(images))
+        latent_img = cipher(clf(images))
+        # decoded_img = model.decoder(latent_img)[i]
+        decoded_img = orig
+        lbl = fcclf(latent_img)[i]
         latent_img = latent_img[i]
+
+        print(lbl)
 
         # ORIGINAL IMAGE
         img = tf.ToPILImage()(orig)
@@ -64,11 +78,12 @@ def plot_ae_data(args: Namespace):
         latent_flat = ((latent_img - mn) * 255/(mx - mn)).flatten()
         # 32*28*28
         # img = Image.fromarray( latent_flat[:24964].detach().cpu().numpy().astype('uint8').reshape((158, 158)), mode='L') 
-        img = Image.fromarray( latent_flat[:6241].detach().cpu().numpy().astype('uint8').reshape((79, 79)), mode='L') 
+        # img = Image.fromarray( latent_flat[:6241].detach().cpu().numpy().astype('uint8').reshape((79, 79)), mode='L') 
+        img = Image.fromarray( latent_flat[:484].detach().cpu().numpy().astype('uint8').reshape((22, 22)), mode='L') 
         plt.subplot(1,3,2)
         plt.title('Latent')
-        plt.xlim((-10, 90))
-        plt.ylim((-10, 90))
+        plt.xlim((-10, 30))
+        plt.ylim((-10, 30))
         plt.axis('off')
         plt.imshow(img)
 
@@ -78,7 +93,7 @@ def plot_ae_data(args: Namespace):
         plt.title('Reconstructed')
         plt.imshow(img)
 
-        plt.savefig(f'{data_dir}{i}.png')        
+        plt.savefig(f'{data_dir}{i}_{lbl}.png')        
         plt.show()
 
 if __name__ == "__main__":

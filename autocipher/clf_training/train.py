@@ -24,6 +24,9 @@ def train(
         writer: SummaryWriter = None):
     model.train()
 
+    fcclf = model.fc
+    model.fc = nn.Identity()
+
     loss_sum, accs_sum = 0, 0
 
     for idx, (images, targets) in enumerate(tqdm(train_loader)):
@@ -31,11 +34,14 @@ def train(
             images, targets = images.cuda(), targets.cuda()
 
         with torch.no_grad():
-            images = nn.Sigmoid()(ae_model.decoder(cipher(ae_model.encoder(images))))
+            images = cipher(model(images))
+
+            # images = nn.Sigmoid()(ae_model.decoder(cipher(ae_model.encoder(images))))
             # images = ae_model(images)
 
         optimizer.zero_grad()
-        outputs = model(images)
+        # outputs = model(images)
+        outputs = fcclf(images)
         loss = loss_func(outputs, targets)
 
         loss.backward()
@@ -57,6 +63,10 @@ def train(
         if writer is not None:
             writer.add_scalar('train/iter_loss', loss.item(),
                               global_step=global_step)
+
+
+    
+    model.fc = fcclf
 
     if writer is not None:
         loss_avg = loss_sum / len(train_loader)
