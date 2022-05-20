@@ -4,20 +4,31 @@ from torch import nn
 from autocipher.models.cipher import Cipher
 
 from autocipher.models.classifier import Resnet18, get_resnet
+from autocipher.models.vgg import vgg11
 
 
 class Autoencoder(nn.Module):
     def __init__(self):
         super().__init__()
-        self.encoder = Encoder1()
+        # self.encoder = Encoder()
+        self.encoder = VGGEncoder()
         # self.encoder = Resnet18()
-        self.decoder = Decoder1()
+        self.decoder = Decoder()
 
     def forward(self, x):
         features = self.encoder(x)
         out = self.decoder(features)
         return out
 
+
+class VGGEncoder(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.encoder = vgg11(True).features
+
+    def forward(self, x):
+        return self.encoder(x)
+        
 
 class Encoder(nn.Module):
     def __init__(self):
