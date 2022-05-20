@@ -6,13 +6,17 @@ import os
 class Cipher(nn.Module):
     def __init__(self) -> None:
         super().__init__()        
-        in_size = 8*28*28
+        in_size = 512#8*28*28
         self.layers = nn.Sequential(
             # nn.Flatten(),
-            # nn.Linear(in_size, in_size),
-            # nn.Tanh(),
-            nn.Conv2d(8, 8, 1, 1),
+            nn.Linear(in_size, in_size),
             nn.Tanh(),
+            nn.Linear(in_size, in_size),
+            nn.Tanh(),
+            nn.Linear(in_size, in_size),
+            nn.Tanh(),
+            # nn.Conv2d(8, 8, 1, 1),
+            # nn.Tanh(),
             # nn.ReLU(True),
             # nn.Linear(in_size//4, in_size),
             # nn.ReLU(True),

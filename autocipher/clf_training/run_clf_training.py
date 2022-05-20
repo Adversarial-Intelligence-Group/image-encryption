@@ -53,10 +53,10 @@ def run_clf_training(args: Namespace):
     scheduler = torch.optim.lr_scheduler.StepLR(
         optimizer, step_size=1, gamma=0.9)
 
-    # args.checkpoint_path = './.assets/checkpoints/ex_1_clf_220515-235814105533/9/checkpoint.pth'
+    args.checkpoint_path = './.assets/checkpoints/ex_1_clf_220515-235814105533/9/checkpoint.pth'
     start_epoch = 0
     if args.checkpoint_path is not None:
-        start_epoch = 11 # FIXME
+        start_epoch = 0 # FIXME
         print(f'Loading model from {args.checkpoint_path}')
         model = load_checkpoint(
             args.checkpoint_path,
