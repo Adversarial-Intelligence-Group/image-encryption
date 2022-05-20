@@ -18,6 +18,7 @@ from autocipher.data import get_dataloaders
 from .utils import load_checkpoint, save_checkpoint
 import random
 from autocipher.models import Autoencoder
+import gc
 
 
 def run_clf_training(args: Namespace):
@@ -33,16 +34,19 @@ def run_clf_training(args: Namespace):
     train_loader, val_loader, test_loader = get_dataloaders(args)
 
 
-    model = CLFNet()
-    model.to(device)
     
     ae_model = Autoencoder()
-    ae_model.to(device)
-    ae_model.eval()
-    ae_checkpoint_path = './.assets/checkpoints/ex_5_220516-020959986245/99/checkpoint.pth'
+    ae_checkpoint_path = '.assets/checkpoints/ex_8_220520-220624529743/1/checkpoint.pth'
     # ae_checkpoint_path = './.assets/checkpoints/ex_1_220515-222359423355/29/checkpoint.pth'
     state = torch.load(ae_checkpoint_path)
     ae_model.load_state_dict(state['model'])
+    ae_model = ae_model.encoder
+    ae_model.eval()
+    ae_model.to(device)
+
+
+    model = CLFNet()
+    model.to(device)
 
     cipher = Cipher()
     cipher = cipher.to(device)
@@ -53,7 +57,6 @@ def run_clf_training(args: Namespace):
     scheduler = torch.optim.lr_scheduler.StepLR(
         optimizer, step_size=1, gamma=0.9)
 
-    args.checkpoint_path = './.assets/checkpoints/ex_1_clf_220515-235814105533/9/checkpoint.pth'
     start_epoch = 0
     if args.checkpoint_path is not None:
         start_epoch = 0 # FIXME

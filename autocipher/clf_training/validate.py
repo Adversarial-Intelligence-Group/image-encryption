@@ -21,8 +21,8 @@ def validate(epoch: int,
              writer: SummaryWriter = None):
     model.eval()
 
-    fcclf = model.fc
-    model.fc = nn.Identity()
+    # fcclf = model.fc
+    # model.fc = nn.Identity()
 
     loss_sum, accs_sum = 0, 0
 
@@ -36,9 +36,9 @@ def validate(epoch: int,
 
             # images = nn.Sigmoid()(ae_model.decoder(cipher(ae_model.encoder(images))))
             # images = ae_model(images)
-            images = cipher(model(images))
-            # outputs = model(images)
-            outputs = fcclf(images)
+            images = cipher(ae_model(images))
+            outputs = model(images)
+            # outputs = fcclf(images)
             acc = accuracy(outputs, targets)
             loss = loss_func(outputs, targets)
             loss_sum += loss.item()
@@ -54,7 +54,7 @@ def validate(epoch: int,
                 'val/iter_loss', loss.item(), global_step=global_step)
 
 
-    model.fc = fcclf
+    # model.fc = fcclf
 
     if writer is not None:
         loss_avg = loss_sum / len(val_loader)

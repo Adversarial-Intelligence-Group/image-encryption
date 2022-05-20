@@ -9,19 +9,21 @@ class CLFNet(nn.Module):
     def __init__(self) -> None:
         super().__init__()
         num_classes = 2
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.classifier = nn.Sequential(
-            nn.Linear(8*28*28, 4096),
+            nn.Linear(512, 4096),
             nn.ReLU(True),
-            nn.Dropout(),
+            nn.Dropout(0.15),
             nn.Linear(4096, 4096),
             nn.ReLU(True),
-            nn.Dropout(),
+            nn.Dropout(0.15),
             nn.Linear(4096, num_classes),
         )
         
         self._initialize_weights()
 
     def forward(self, x):
+        x = self.avgpool(x)
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x

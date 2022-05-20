@@ -6,23 +6,23 @@ import os
 class Cipher(nn.Module):
     def __init__(self) -> None:
         super().__init__()        
-        in_size = 512#8*28*28
+        in_size = 512*7*7#8*28*28
         self.layers = nn.Sequential(
             # nn.Flatten(),
-            nn.Linear(in_size, in_size),
-            nn.Tanh(),
-            nn.Linear(in_size, in_size),
-            nn.Tanh(),
-            nn.Linear(in_size, in_size),
-            nn.Tanh(),
-            # nn.Conv2d(8, 8, 1, 1),
+            # nn.Linear(in_size, in_size),
             # nn.Tanh(),
+            # nn.Linear(in_size, in_size),
+            # nn.Tanh(),
+            # nn.Linear(in_size, in_size),
+            # nn.Tanh(),
+            nn.Conv2d(512, 512, 1, 1),
+            nn.Tanh(),
             # nn.ReLU(True),
             # nn.Linear(in_size//4, in_size),
             # nn.ReLU(True),
             # nn.Linear(in_size, in_size),
             # nn.ReLU(True),
-            # nn.Unflatten(1, (8, 28, 28))
+            # nn.Unflatten(1, (512, 7, 7))
         )
         model_path = './_assets/cipher.pth'
         is_init = os.path.exists(model_path)
