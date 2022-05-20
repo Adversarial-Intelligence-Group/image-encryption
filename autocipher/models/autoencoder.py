@@ -73,14 +73,11 @@ class ResnetDecoder(nn.Module):
             nn.ConvTranspose2d(128, 64, 3, stride=1, padding=1),
             nn.ReLU(),
             nn.Upsample(scale_factor=2.0),
-            nn.ConvTranspose2d(64, 32, 3, stride=1, padding=1),
+            nn.ConvTranspose2d(64, 16, 3, stride=1, padding=1),
             nn.ReLU(),
             nn.Upsample(scale_factor=2.0),
-            nn.ConvTranspose2d(32, 16, 4, stride=2, padding=1),
-            nn.ReLU(),
-            nn.ConvTranspose2d(16, 8, 3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(8, 3, 3, stride=1, padding=1),
+            nn.Upsample(scale_factor=2.0),
+            nn.Conv2d(16, 3, 3, stride=1, padding=1),
         )
 
     def forward(self, x):
