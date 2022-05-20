@@ -204,3 +204,4 @@ $RECYCLE.BIN/
 /_assets*
 /.assets*
 /lightning_logs
+/.idea
