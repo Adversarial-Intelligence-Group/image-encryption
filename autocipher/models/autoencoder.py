@@ -16,7 +16,7 @@ class Autoencoder(nn.Module):
         self.decoder = ResnetDecoder()
 
     def forward(self, x):
-        with torch.no_grad()
+        with torch.no_grad():
             features = self.encoder(x)
         out = self.decoder(features)
         return out
