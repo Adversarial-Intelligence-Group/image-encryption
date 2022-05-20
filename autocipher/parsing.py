@@ -6,7 +6,7 @@ from argparse import ArgumentParser, Namespace
 def add_train_args(parser: ArgumentParser):
     parser.add_argument('--run_id',
                         type=str,
-                        default='1_no_train_enc',
+                        default='2_nt_enc_ctdec',
                         help='Run ID')
     parser.add_argument('--device',
                         type=str,
@@ -56,7 +56,7 @@ def add_train_args(parser: ArgumentParser):
                         help='Batch size (default: 64)')
     parser.add_argument('--lr',
                         type=float,
-                        default=1e-4,
+                        default=1e-2,
                         help='Initial learning rate (default: 1e-2)')
 
 

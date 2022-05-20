@@ -41,6 +41,10 @@ def train(
             writer.add_scalar('train/iter_loss', loss.item(),
                               global_step=global_step)
 
+        if idx % 100 == 99:
+            writer.add_images("train/iter_output", nn.Sigmoid()(outputs[:8]), global_step=global_step)
+            writer.add_images("train/iter_target", targets[:8], global_step=global_step)
+
     if writer is not None:
         loss_avg = loss_sum / len(train_loader)
 

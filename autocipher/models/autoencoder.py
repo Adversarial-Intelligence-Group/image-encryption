@@ -13,7 +13,7 @@ class Autoencoder(nn.Module):
         # self.encoder = Encoder()
         self.encoder = VGGEncoder()
         # self.encoder = Resnet18()
-        self.decoder = ResnetDecoder()
+        self.decoder = ResnetCTDecoder()
 
     def forward(self, x):
         with torch.no_grad():
@@ -33,6 +33,29 @@ class VGGEncoder(nn.Module):
 
     def forward(self, x):
         return self.encoder(x) # [bs, 512, 7, 7]
+
+class ResnetCTDecoder(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        self.res_decoder = nn.Sequential(
+            nn.ConvTranspose2d(512, 256, 1, stride=1),
+            nn.ReLU(),
+            nn.ConvTranspose2d(256, 128, 4, stride=2, padding=1),
+            nn.ReLU(),
+            nn.ConvTranspose2d(128, 64, 4, stride=2, padding=1),
+            nn.ReLU(),
+            nn.ConvTranspose2d(64, 32, 4, stride=2, padding=1),
+            nn.ReLU(),
+            nn.ConvTranspose2d(32, 16, 4, stride=2, padding=1),
+            nn.ReLU(),
+            nn.ConvTranspose2d(16, 8, 4, stride=2, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(8, 3, 3, stride=1, padding=1),
+        )
+
+    def forward(self, x):
+        return self.res_decoder(x)   
 
 class ResnetDecoder(nn.Module):
     def __init__(self):
