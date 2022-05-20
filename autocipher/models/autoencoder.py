@@ -13,10 +13,11 @@ class Autoencoder(nn.Module):
         # self.encoder = Encoder()
         self.encoder = VGGEncoder()
         # self.encoder = Resnet18()
-        self.decoder = Decoder()
+        self.decoder = ResnetDecoder()
 
     def forward(self, x):
-        features = self.encoder(x)
+        with torch.no_grad()
+            features = self.encoder(x)
         out = self.decoder(features)
         return out
 
@@ -25,9 +26,43 @@ class VGGEncoder(nn.Module):
     def __init__(self):
         super().__init__()
         self.encoder = vgg11(True).features
+        feature_extracting = False
+        if feature_extracting:
+            for param in self.encoder.parameters():
+                param.requires_grad = False
 
     def forward(self, x):
-        return self.encoder(x)
+        return self.encoder(x) # [bs, 512, 7, 7]
+
+class ResnetDecoder(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        self.res_decoder = nn.Sequential(
+            # nn.ConvTranspose2d(32, 16, 3, stride=1, padding=1),
+            # nn.InstanceNorm2d(32),
+            nn.ConvTranspose2d(512, 256, 1, stride=1),
+            nn.ReLU(),
+            nn.Upsample(scale_factor=2.0),
+            nn.ConvTranspose2d(256, 128, 3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Upsample(scale_factor=2.0),
+            nn.ConvTranspose2d(128, 64, 3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Upsample(scale_factor=2.0),
+            nn.ConvTranspose2d(64, 32, 3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Upsample(scale_factor=2.0),
+            nn.ConvTranspose2d(32, 16, 3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Upsample(scale_factor=2.0),
+            nn.ConvTranspose2d(16, 8, 3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(8, 3, 3, stride=1, padding=1),
+        )
+
+    def forward(self, x):
+        return self.res_decoder(x)       
         
 
 class Encoder(nn.Module):
@@ -80,32 +115,4 @@ class Decoder(nn.Module):
         return self.decoder(x)
 
 
-class ResnetDecoder(nn.Module):
-    def __init__(self):
-        super().__init__()
 
-        self.res_decoder = nn.Sequential(
-            # nn.ConvTranspose2d(32, 16, 3, stride=1, padding=1),
-            # nn.InstanceNorm2d(32),
-            nn.ConvTranspose2d(512, 256, 1, stride=1),
-            nn.ReLU(),
-            nn.Upsample(scale_factor=2.0),
-            nn.ConvTranspose2d(256, 128, 3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.Upsample(scale_factor=2.0),
-            nn.ConvTranspose2d(128, 64, 3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.Upsample(scale_factor=2.0),
-            nn.ConvTranspose2d(64, 32, 3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.Upsample(scale_factor=2.0),
-            nn.ConvTranspose2d(32, 16, 3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.Upsample(scale_factor=2.0),
-            nn.ConvTranspose2d(16, 8, 3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(8, 3, 3, stride=1, padding=1),
-        )
-
-    def forward(self, x):
-        return self.res_decoder(x)
