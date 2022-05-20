@@ -31,8 +31,9 @@ def train(
             images, targets = images.cuda(), targets.cuda()
 
         with torch.no_grad():
-        #     images = nn.Sigmoid()(ae_model.decoder(cipher(ae_model.encoder(images))))
-            images = cipher(ae_model(images))
+        # #     images = nn.Sigmoid()(ae_model.decoder(cipher(ae_model.encoder(images))))
+        #     images = cipher(ae_model(images))
+            images = ae_model(images)
 
         optimizer.zero_grad()
         outputs = model(images)

@@ -6,7 +6,7 @@ from argparse import ArgumentParser, Namespace
 def add_train_args(parser: ArgumentParser):
     parser.add_argument('--run_id',
                         type=str,
-                        default='ex_3_clf',
+                        default='ex_4_clf',
                         help='Run ID')
     parser.add_argument('--device',
                         type=str,

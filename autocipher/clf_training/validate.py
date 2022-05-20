@@ -35,8 +35,8 @@ def validate(epoch: int,
             #     writer.add_graph(model, images)
 
             # images = nn.Sigmoid()(ae_model.decoder(cipher(ae_model.encoder(images))))
-            # images = ae_model(images)
-            images = cipher(ae_model(images))
+            images = ae_model(images)
+            # images = cipher(ae_model(images))
             outputs = model(images)
             # outputs = fcclf(images)
             acc = accuracy(outputs, targets)
