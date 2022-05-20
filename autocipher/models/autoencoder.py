@@ -16,8 +16,7 @@ class Autoencoder(nn.Module):
         self.decoder = ResnetDecoder()
 
     def forward(self, x):
-        with torch.no_grad():
-            features = self.encoder(x)
+        features = self.encoder(x)
         out = self.decoder(features)
         return out
 
@@ -26,10 +25,10 @@ class VGGEncoder(nn.Module):
     def __init__(self):
         super().__init__()
         self.encoder = vgg11(True).features
-        feature_extracting = False
-        if feature_extracting:
-            for param in self.encoder.parameters():
-                param.requires_grad = False
+        # feature_extracting = True
+        # if feature_extracting:
+        #     for param in self.encoder.parameters():
+        #         param.requires_grad = False
 
     def forward(self, x):
         return self.encoder(x) # [bs, 512, 7, 7]
@@ -42,7 +41,7 @@ class VGGDecoder(nn.Module):
             nn.ConvTranspose2d(512, 512, 1, stride=1),
             nn.ReLU(),
             nn.Upsample(scale_factor=2.0),
-            nn.ConvTranspose2d(512, 512, 3, stride=1, padding=1),
+            nn.ConvTranspose2d(512, 256, 3, stride=1, padding=1),
             nn.ReLU(),
             nn.Upsample(scale_factor=2.0),
             nn.ConvTranspose2d(512, 256, 3, stride=1, padding=1),
