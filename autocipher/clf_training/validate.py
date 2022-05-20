@@ -31,7 +31,7 @@ def validate(epoch: int,
             if writer is not None and (epoch == 0 and idx == 0):
                 writer.add_graph(model, images)
 
-            images = nn.Sigmoid()(ae_model.decoder(cipher(ae_model.encoder(images))))
+            # images = nn.Sigmoid()(ae_model.decoder(cipher(ae_model.encoder(images))))
             # images = ae_model(images)
             outputs = model(images)
             acc = accuracy(outputs, targets)

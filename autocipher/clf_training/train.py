@@ -30,8 +30,8 @@ def train(
         if next(model.parameters()).is_cuda:
             images, targets = images.cuda(), targets.cuda()
 
-        with torch.no_grad():
-            images = nn.Sigmoid()(ae_model.decoder(cipher(ae_model.encoder(images))))
+        # with torch.no_grad():
+        #     images = nn.Sigmoid()(ae_model.decoder(cipher(ae_model.encoder(images))))
             # images = ae_model(images)
 
         optimizer.zero_grad()
