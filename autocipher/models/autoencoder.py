@@ -34,6 +34,36 @@ class VGGEncoder(nn.Module):
     def forward(self, x):
         return self.encoder(x) # [bs, 512, 7, 7]
 
+class VGGDecoder(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        self.decoder = nn.Sequential(
+            nn.ConvTranspose2d(512, 512, 1, stride=1),
+            nn.ReLU(),
+            nn.Upsample(scale_factor=2.0),
+            nn.ConvTranspose2d(512, 512, 3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Upsample(scale_factor=2.0),
+            nn.ConvTranspose2d(512, 256, 3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.ConvTranspose2d(256, 256, 3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Upsample(scale_factor=2.0),
+            nn.ConvTranspose2d(256, 256, 3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.ConvTranspose2d(256, 128, 3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Upsample(scale_factor=2.0),
+            nn.ConvTranspose2d(128, 64, 3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Upsample(scale_factor=2.0),
+            nn.ConvTranspose2d(64, 3, 3, stride=1, padding=1),
+        )
+
+    def forward(self, x):
+        return self.decoder(x)   
+
 class ResnetCTDecoder(nn.Module):
     def __init__(self):
         super().__init__()
